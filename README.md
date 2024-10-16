@@ -18,5 +18,5 @@
 4. **Run the Streamlit app**  
    Use the command below to run the Streamlit app:  
    ```bash
-   streamlit run <app-name>.py
+   streamlit run frontend/streamlit_app.py
    ```
