@@ -1,6 +1,10 @@
 ## Application
+<img width="1615" alt="REP_homepage" src="https://github.com/user-attachments/assets/87a2dd30-5667-48ef-bb69-6fbe0801d6a0">
 
-[Homepage](https://github.com/mcfatbeard57/Reddit-Analytics-Platform/blob/main/images/REP_homepage.png)
+<img width="1667" alt="REP_ollama" src="https://github.com/user-attachments/assets/be5e09f9-5200-42c4-9b2f-165888215628">
+
+<img width="1624" alt="REP_Themes_News" src="https://github.com/user-attachments/assets/baaf82c5-dedd-4948-a4af-8839d90d0c22">
+
 
 ## Process to Run the Application
 
