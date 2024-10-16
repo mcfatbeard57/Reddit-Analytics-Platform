@@ -12,7 +12,7 @@
 3. **Install dependencies**  
    Activate the virtual environment and run the following command to install the required packages:  
    ```bash
-   pip install -r requirements.txt
+   pip install -r reddit_analytics/requirements.txt
    ```
 
 4. **Run the Streamlit app**  
