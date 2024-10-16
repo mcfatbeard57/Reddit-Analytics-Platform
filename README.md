@@ -1,3 +1,6 @@
+## Application
+
+[Homepage](https://github.com/mcfatbeard57/Reddit-Analytics-Platform/blob/main/images/REP_homepage.png)
 
 ## Process to Run the Application
 
