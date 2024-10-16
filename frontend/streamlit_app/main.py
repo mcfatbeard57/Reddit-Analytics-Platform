@@ -77,6 +77,10 @@ def show_main_page():
                     new_subreddit = {"name": subreddit_name, "description": f"User-added subreddit: r/{subreddit_name}"}
                     store_subreddit(new_subreddit)
                     stored_subreddits = get_stored_subreddits()
+                    # Add default description to stored subreddits if missing
+                    for subreddit in stored_subreddits:
+                        if 'description' not in subreddit:
+                            subreddit['description'] = f"Subreddit: r/{subreddit['name']}"
                     all_subreddits = DEFAULT_SUBREDDITS + [s for s in stored_subreddits if s['name'] not in [d['name'] for d in DEFAULT_SUBREDDITS]]
                     st.session_state.subreddits = all_subreddits
                     st.success(f"Successfully added r/{subreddit_name}")
@@ -93,7 +97,7 @@ def show_main_page():
     for i, subreddit in enumerate(st.session_state.subreddits):
         with col1 if i % 2 == 0 else col2:
             with st.expander(f"r/{subreddit['name']}", expanded=True):
-                st.write(f"**Description:** {subreddit['description']}")
+                st.write(f"**Description:** {subreddit.get('description', 'No description available')}")
                 if st.button(f"View Analytics for r/{subreddit['name']}", key=f"view_{subreddit['name']}"):
                     st.session_state.current_page = subreddit['name']
                     st.experimental_rerun()
