@@ -54,7 +54,7 @@ def categorize_post(post):
     model = Ollama(model=OLLAMA_MODEL)
 
     # Generate the output
-    output = model(_input.to_string())
+    output = model.invoke(_input.to_string())
     
     print(f"Raw output from model: {output}")  # Debug print
 
