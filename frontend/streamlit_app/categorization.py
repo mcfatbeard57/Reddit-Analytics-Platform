@@ -75,3 +75,5 @@ def categorize_posts(posts):
     for post in posts:
         post['categories'] = categorize_post(post)
     return posts
+
+# Done
