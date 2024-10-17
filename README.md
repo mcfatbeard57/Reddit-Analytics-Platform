@@ -25,5 +25,15 @@
 4. **Run the Streamlit app**  
    Use the command below to run the Streamlit app:  
    ```bash
-   streamlit run frontend/streamlit_app.py
+   streamlit run frontend/streamlit_app/main.py
    ```
+
+5. Make sure your ollama is running and the model is loaded. Change model name if you want.
+
+6. Make sure your supabase is running and the database is created. Change the .env file if you want.
+
+7. Run the app.
+
+
+
+
