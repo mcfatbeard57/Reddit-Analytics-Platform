@@ -32,6 +32,14 @@
 
 6. Make sure your supabase is running and the database is created. Change the .env file if you want.
 
+7. .env file should have the following variables:
+- REDDIT_CLIENT_ID=""
+- REDDIT_CLIENT_SECRET=""
+- REDDIT_USER_AGENT=""
+- SUPABASE_URL=""
+- SUPABASE_KEY=""
+- OLLAMA_MODEL = ""
+
 7. Run the app.
 
 
