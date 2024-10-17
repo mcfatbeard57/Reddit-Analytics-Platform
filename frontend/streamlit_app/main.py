@@ -1,6 +1,5 @@
 import streamlit as st
 import re
-
 import sys
 import os
 
@@ -8,17 +7,9 @@ import os
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, project_root)
 
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# st.write(sys.executable)
-
-print(f"Python executable: {sys.executable}")
-print(f"Python version: {sys.version}")
-print("Python path:")
-for path in sys.path:
-    print(path)
-
-from subreddit_detail import subreddit_detail
-from supabase_ops import store_subreddit, get_stored_subreddits
+from supabase_ops import store_subreddit, get_stored_subreddits, get_categorized_posts, delete_subreddit
+from subreddit_collections import collections_page
+from categorization import CATEGORIES
 
 # Default subreddits
 DEFAULT_SUBREDDITS = [
@@ -38,12 +29,37 @@ def extract_subreddit_name(url):
     match = re.search(r'/r/([\w-]+)', url)
     return match.group(1) if match else None
 
-def main():
-    st.set_page_config(page_title="Reddit Analytics Platform", page_icon="📊", layout="wide")
+def display_themes(subreddit_name):
+    st.title(f"r/{subreddit_name} Themes")
+    
+    # Fetch categorized posts for the subreddit
+    posts = get_categorized_posts(subreddit_name)
+    
+    # Group posts by category
+    categorized_posts = {category: [] for category in CATEGORIES}
+    for post in posts:
+        for category in post.get('categories', []):
+            if category in CATEGORIES:
+                categorized_posts[category].append(post)
+    
+    # Display posts by category
+    for category in CATEGORIES:
+        with st.expander(f"{category} ({len(categorized_posts[category])})"):
+            if categorized_posts[category]:
+                for post in categorized_posts[category]:
+                    st.write(f"**{post['title']}**")
+                    st.write(f"Score: {post.get('score', 'N/A')} | Comments: {post.get('num_comments', 'N/A')}")
+                    st.write(f"[Link to post]({post.get('url', '#')})")
+                    st.write("---")
+            else:
+                st.write("No posts in this category.")
 
-    # Initialize session state for current page if not exists
-    if 'current_page' not in st.session_state:
-        st.session_state.current_page = "main"
+def main():
+    st.set_page_config(page_title="Reddit Analytics Platform", layout="wide")
+
+    # Initialize session state for current subreddit if not exists
+    if 'current_subreddit' not in st.session_state:
+        st.session_state.current_subreddit = None
 
     # Initialize session state for subreddits if not exists
     if 'subreddits' not in st.session_state:
@@ -52,10 +68,14 @@ def main():
         all_subreddits = DEFAULT_SUBREDDITS + [s for s in stored_subreddits if s['name'] not in [d['name'] for d in DEFAULT_SUBREDDITS]]
         st.session_state.subreddits = all_subreddits
 
-    if st.session_state.current_page == "main":
+    # Update the sidebar to include the new Collections page
+    st.sidebar.title("Reddit Analytics Platform")
+    page = st.sidebar.radio("Navigate", ["Home", "Collections"])
+
+    if page == "Home":
         show_main_page()
-    else:
-        subreddit_detail(st.session_state.current_page)
+    elif page == "Collections":
+        collections_page()
 
 def show_main_page():
     st.title("Reddit Analytics Platform")
@@ -96,11 +116,22 @@ def show_main_page():
     # Display subreddit cards
     for i, subreddit in enumerate(st.session_state.subreddits):
         with col1 if i % 2 == 0 else col2:
-            with st.expander(f"r/{subreddit['name']}", expanded=True):
-                st.write(f"**Description:** {subreddit.get('description', 'No description available')}")
+            st.subheader(f"r/{subreddit['name']}")
+            st.write(f"**Description:** {subreddit.get('description', 'No description available')}")
+            button_col1, button_col2 = st.columns(2)
+            with button_col1:
                 if st.button(f"View Analytics for r/{subreddit['name']}", key=f"view_{subreddit['name']}"):
-                    st.session_state.current_page = subreddit['name']
+                    st.session_state.current_subreddit = subreddit['name']
+            with button_col2:
+                if st.button(f"Delete r/{subreddit['name']}", key=f"delete_{subreddit['name']}"):
+                    delete_subreddit(subreddit['name'])
+                    st.session_state.subreddits = [s for s in st.session_state.subreddits if s['name'] != subreddit['name']]
+                    st.success(f"Deleted r/{subreddit['name']}")
                     st.experimental_rerun()
+
+    # Display themes for the selected subreddit
+    if st.session_state.current_subreddit:
+        display_themes(st.session_state.current_subreddit)
 
 if __name__ == "__main__":
     main()
